@@ -8,7 +8,7 @@ authors = ["Simon Lundström <simlu+github@su.se>"]
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
