@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "shib-keygen-api"
 version = "0.1.0"
-description = "An API which generates Shibboleth SP metadata keys and stores them in Vault"
+description = "An API which generates Shibboleth SP metadata certificate, keys and stores them in e.g. Vault"
 authors = ["Simon Lundström <simlu+github@su.se>"]
 
 [tool.poetry.dependencies]
