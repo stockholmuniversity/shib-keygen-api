@@ -6,6 +6,7 @@ authors = ["Simon Lundström <simlu+github@su.se>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+flask = "^2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"
