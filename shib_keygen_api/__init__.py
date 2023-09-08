@@ -1,4 +1,5 @@
 import importlib.metadata as importlib_metadata
+import sys
 from importlib.metadata import entry_points
 
 from flask import Flask
@@ -22,6 +23,12 @@ output_plugin = next(
     ),
     None,
 )
+if not output_plugin:
+    app.logger.fatal(
+        "Tried to load plugin %r but failed to find it",
+        PLUGIN,
+    )
+    sys.exit(1)
 
 app.logger.info("Loaded output plugin %r", output_plugin.name)
 
