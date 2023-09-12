@@ -1,6 +1,7 @@
 import importlib.metadata as importlib_metadata
 import sys
 from importlib.metadata import entry_points
+from typing import Any, Dict, Tuple
 
 from flask import Flask
 
@@ -36,7 +37,7 @@ output_plugin = output_plugin_class.load()
 
 
 @app.route("/")
-def index():
+def index() -> Dict[str, str]:
     return {
         "fax": "data",
         "version": __version__,
