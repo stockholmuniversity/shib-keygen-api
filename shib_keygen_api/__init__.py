@@ -41,9 +41,9 @@ def index() -> Dict[str, str]:
     return {
         "fax": "data",
         "version": __version__,
-        "plugin": repr(output_plugin),
-        "output": repr(output),
-        "export": output.export() if output else "no plugin",
+        "plugin_class": repr(output_plugin_class),
+        "output": repr(output_plugin),
+        "export": output_plugin.export() if output_plugin else "no plugin",
     }
 
 
