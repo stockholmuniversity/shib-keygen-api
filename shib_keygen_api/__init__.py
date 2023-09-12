@@ -51,7 +51,7 @@ def status() -> Tuple[Dict[str, Any], int]:
     code = 200
     try:
         plugin_status = output_plugin.status() if output_plugin else None
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         code = 500
         plugin_status = False
         app.logger.info(
