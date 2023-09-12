@@ -13,7 +13,7 @@ __version__ = __metadata__["Version"]
 DEFAULT_PLUGIN = "stdout"
 PLUGIN_GROUP = "shib_keygen_api.plugins"
 PLUGIN = app.config.get("OUTPUT_PLUGIN", DEFAULT_PLUGIN)
-output_plugin = next(
+output_plugin_class = next(
     iter(
         [
             ep
@@ -23,16 +23,18 @@ output_plugin = next(
     ),
     None,
 )
-if not output_plugin:
+if not output_plugin_class:
     app.logger.fatal(
         "Tried to load plugin %r but failed to find it",
         PLUGIN,
     )
     sys.exit(1)
 
-app.logger.info("Loaded output plugin %r", output_plugin.name)
+app.logger.info("Loaded output plugin %r", output_plugin_class.name)
 
-output = output_plugin.load() if output_plugin else None
+output_plugin = output_plugin_class.load()
+
+
 @app.route("/")
 def index():
     return {
@@ -42,3 +44,26 @@ def index():
         "output": repr(output),
         "export": output.export() if output else "no plugin",
     }
+
+
+@app.route("/status")
+def status() -> Tuple[Dict[str, Any], int]:
+    code = 200
+    try:
+        plugin_status = output_plugin.status() if output_plugin else None
+    except Exception as ex:
+        code = 500
+        plugin_status = False
+        app.logger.info(
+            "Caught exception %r while trying to get status from plugin %r",
+            ex,
+            output_plugin,
+        )
+    plugin_name = output_plugin_class.name if output_plugin_class else None
+
+    return {
+        "plugin": {"name": plugin_name, "status": plugin_status},
+        "version": __version__,
+        "output": repr(output_plugin),
+        "export": output_plugin.export() if output_plugin else "no plugin",
+    }, code
