@@ -1,9 +1,12 @@
 import importlib.metadata as importlib_metadata
 import sys
 from importlib.metadata import entry_points
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
-from flask import Flask
+from flask import Flask, request
+from werkzeug.exceptions import HTTPException
+
+from shib_keygen_api.plugins import CSR
 
 app = Flask(__name__)
 
@@ -45,6 +48,28 @@ def index() -> Dict[str, str]:
         "output": repr(output_plugin),
         "export": output_plugin.export() if output_plugin else "no plugin",
     }
+
+
+@app.post("/generate")
+def generate() -> Any:
+    code: Optional[int] = 200
+    response: Any = {}
+    try:
+        csr_json = request.get_json(force=True)
+        app.logger.info("%r", csr_json)
+        csr = CSR(**csr_json)
+        app.logger.info("%r", csr)
+        response = {"status": repr(csr)}
+    except HTTPException as ex:
+        app.logger.exception("wat")
+        code = ex.code
+        response = {"error": {"code": code, "message": str(ex)}}
+    except TypeError as ex:
+        app.logger.exception("wat")
+        code = 400
+        response = {"error": {"code": code, "message": str(ex)}}
+
+    return response, code
 
 
 @app.route("/status")
