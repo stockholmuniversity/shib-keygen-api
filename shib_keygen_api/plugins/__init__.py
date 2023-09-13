@@ -3,6 +3,12 @@ from dataclasses import dataclass
 
 
 @dataclass
+class PEM(metaclass=ABCMeta):
+    private: str
+    public: str
+
+
+@dataclass
 class CSR(metaclass=ABCMeta):
     common_name: str
     path: str
@@ -11,7 +17,7 @@ class CSR(metaclass=ABCMeta):
 class Plugin(metaclass=ABCMeta):
     @classmethod
     @abstractmethod
-    def export(cls) -> bool:
+    def export(cls, pem: PEM) -> bool:
         pass
 
     @classmethod

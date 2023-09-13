@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional, Tuple
 from flask import Flask, request
 from werkzeug.exceptions import HTTPException
 
+from shib_keygen_api.generator import openssl
 from shib_keygen_api.plugins import CSR
 
 app = Flask(__name__)
@@ -46,7 +47,6 @@ def index() -> Dict[str, str]:
         "version": __version__,
         "plugin_class": repr(output_plugin_class),
         "output": repr(output_plugin),
-        "export": output_plugin.export() if output_plugin else "no plugin",
     }
 
 
@@ -59,7 +59,10 @@ def generate() -> Any:
         app.logger.info("%r", csr_json)
         csr = CSR(**csr_json)
         app.logger.info("%r", csr)
-        response = {"status": repr(csr)}
+        cert = openssl(csr)
+        app.logger.info("%r", cert)
+        export_status = output_plugin.export(cert)
+        response = {"status": export_status}
     except HTTPException as ex:
         app.logger.exception("wat")
         code = ex.code
@@ -91,5 +94,4 @@ def status() -> Tuple[Dict[str, Any], int]:
         "plugin": {"name": plugin_name, "status": plugin_status},
         "version": __version__,
         "output": repr(output_plugin),
-        "export": output_plugin.export() if output_plugin else "no plugin",
     }, code
