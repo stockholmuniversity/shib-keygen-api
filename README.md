@@ -3,8 +3,8 @@
 Generate Shibboleth SP/SAML2 metadata X509 certificates, keys and then stores them in e.g. Vault
 
 # TODO
-* [ ] Add `/generate` endpoint
-* [ ] Decide plugin signature
+* [X] Add `/generate` endpoint
+* [X] Decide plugin signature
 * Implement plugins
   * [X] `stdout` plugin
   * [ ] `dir` plugin
