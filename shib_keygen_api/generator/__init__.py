@@ -35,7 +35,7 @@ subjectKeyIdentifier=hash
         )
         command = list(
             shlex.split(
-                f"openssl req -config {ssl_config.name} -new -x509 -days {DAYS}"
+                f"openssl req -nodes -config {ssl_config.name} -new -x509 -days {DAYS}"
             )
         )
         with subprocess.Popen(
