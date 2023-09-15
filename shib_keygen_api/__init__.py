@@ -71,6 +71,11 @@ def generate() -> Any:
         app.logger.exception("wat")
         code = 400
         response = {"error": {"code": code, "message": str(ex)}}
+    except RuntimeError:
+        message = "Error generating certificate and key"
+        app.logger.exception(message)
+        code = 500
+        response = {"error": {"code": code, "message": message}}
 
     return response, code
 
