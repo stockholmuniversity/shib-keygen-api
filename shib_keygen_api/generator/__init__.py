@@ -1,6 +1,7 @@
 import shlex
 import subprocess
 import tempfile
+from typing import Dict
 
 from flask import current_app
 
@@ -34,7 +35,7 @@ subjectKeyIdentifier=hash
         )
         command = list(
             shlex.split(
-                f"openssl req -config {ssl_config.name} -new -x509 -days {DAYS} -keyout {csr.common_name}-key.pem -out {csr.common_name}-cert.pem"
+                f"openssl req -config {ssl_config.name} -new -x509 -days {DAYS}"
             )
         )
         with subprocess.Popen(
@@ -46,22 +47,39 @@ subjectKeyIdentifier=hash
             text=True,
         ) as process:
             try:
-                (_, stderr) = process.communicate(timeout=timeout)
+                (stdout, stderr) = process.communicate(timeout=timeout)
+
                 # Strip out irrelevant dhparam(?) output
                 stderr = stderr.lstrip("*.+-\n")
-                current_app.logger.debug("stderr: %r", stderr)
+
                 current_app.logger.debug("Process returncode: %r", process.returncode)
                 if process.returncode != 0:
                     raise RuntimeError(stderr)
+
+                x509_markers = {
+                    "private": {
+                        "start": "-----BEGIN PRIVATE KEY-----",
+                        "end": "-----END PRIVATE KEY-----\n",
+                    },
+                    "public": {
+                        "start": "-----BEGIN CERTIFICATE-----",
+                        "end": "-----END CERTIFICATE-----\n",
+                    },
+                }
+
+                def find_cert(positions: Dict[str, str]) -> str:
+                    start = stdout.find(positions["start"])
+                    end = stdout.find(positions["end"]) + len(positions["end"])
+                    return stdout[start:end]
+
+                certs = {k: find_cert(v) for k, v in x509_markers.items()}
+
+                pem = PEM(**certs)
+                current_app.logger.info(
+                    "Successfully generated certificate and key for %r", csr.common_name
+                )
+                return pem
             except subprocess.TimeoutExpired as ex:
                 raise RuntimeError(r"Hit timeout after {timeout}s") from ex
             finally:
                 process.kill()
-
-            current_app.logger.info(
-                "Successfully generated certificate and key for %r", csr.common_name
-            )
-
-    current_app.logger.info("%r", csr)
-    public, private = ("lol", "lol")
-    return PEM(private, public)
