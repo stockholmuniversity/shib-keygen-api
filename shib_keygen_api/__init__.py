@@ -61,6 +61,11 @@ def generate() -> Any:
         app.logger.debug("%r", csr)
         cert = openssl(csr)
         export_status = output_plugin.export(cert)
+        app.logger.debug(
+            "Export plugin %r export_status: %r",
+            output_plugin,
+            export_status,
+        )
         response = {"status": export_status}
     except HTTPException as ex:
         app.logger.exception("wat")
