@@ -60,7 +60,6 @@ def generate() -> Any:
         csr = CSR(**csr_json)
         app.logger.debug("%r", csr)
         cert = openssl(csr)
-        app.logger.info("%r", cert)
         export_status = output_plugin.export(cert)
         response = {"status": export_status}
     except HTTPException as ex:
