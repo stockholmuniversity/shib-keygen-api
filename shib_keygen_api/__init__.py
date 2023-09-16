@@ -60,7 +60,7 @@ def generate() -> Any:
         csr = CSR(**csr_json)
         app.logger.debug("%r", csr)
         cert = openssl(csr)
-        export_status = output_plugin.export(cert)
+        export_status = output_plugin.export(cert, csr)
         app.logger.debug(
             "Export plugin %r export_status: %r",
             output_plugin,

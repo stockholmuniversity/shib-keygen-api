@@ -17,7 +17,7 @@ class CSR(metaclass=ABCMeta):
 class Plugin(metaclass=ABCMeta):
     @classmethod
     @abstractmethod
-    def export(cls, pem: PEM) -> bool:
+    def export(cls, pem: PEM, csr: CSR) -> bool:
         pass
 
     @classmethod
