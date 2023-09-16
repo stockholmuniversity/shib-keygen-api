@@ -67,7 +67,7 @@ PLUGIN_CONFIG = {
   * [X] `stdout` plugin
   * [X] `dir` plugin
   * [ ] `vault` plugin
-* [ ] Implement configuration for each plugin
+* [X] Implement configuration for each plugin
 * [X] Add `/status` page
   * [X] Add a `status` check for each plugin
 * [X] Add certificate and key generation using `openssl-req(1)`
