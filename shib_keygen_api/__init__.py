@@ -11,6 +11,8 @@ from shib_keygen_api.plugins import CSR
 
 app = Flask(__name__)
 
+app.config.from_envvar("FLASK_CONFIG", silent=True)
+app.config.from_prefixed_env()
 
 __metadata__ = importlib_metadata.metadata(__name__)
 __version__ = __metadata__["Version"]
