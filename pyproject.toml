@@ -19,6 +19,7 @@ mypy = "^1.5.1"
 
 [tool.poetry.plugins."shib_keygen_api.plugins"]
 stdout = "shib_keygen_api.plugins.stdout:Stdout"
+dir = "shib_keygen_api.plugins.dir:Dir"
 
 [tool.pylint]
     [tool.pylint.master]
