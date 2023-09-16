@@ -56,9 +56,9 @@ def generate() -> Any:
     response: Any = {}
     try:
         csr_json = request.get_json(force=True)
-        app.logger.info("%r", csr_json)
+        app.logger.debug("%r", csr_json)
         csr = CSR(**csr_json)
-        app.logger.info("%r", csr)
+        app.logger.debug("%r", csr)
         cert = openssl(csr)
         app.logger.info("%r", cert)
         export_status = output_plugin.export(cert)
