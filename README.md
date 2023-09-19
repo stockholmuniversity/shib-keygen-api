@@ -60,6 +60,16 @@ PLUGIN_CONFIG = {
 }
 ```
 
+##### `vault`
+```python
+PLUGIN_CONFIG = {
+  "vault": {
+    "default_kv_version": 1, # https://hvac.readthedocs.io/en/stable/usage/secrets_engines/kv.html#setting-the-default-kv-version
+    "client": {}, # Any option from https://hvac.readthedocs.io/en/stable/source/hvac_v1.html#hvac.v1.Client
+  },
+}
+```
+
 # TODO
 * [X] Add `/generate` endpoint
 * [X] Decide plugin signature
