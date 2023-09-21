@@ -99,7 +99,7 @@ different ways:
 * Implement plugins
   * [X] `stdout` plugin
   * [X] `dir` plugin
-  * [ ] `vault` plugin
+  * [x] `vault` plugin
 * [X] Implement configuration for each plugin
 * [X] Add `/status` page
   * [X] Add a `status` check for each plugin
