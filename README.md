@@ -65,6 +65,8 @@ PLUGIN_CONFIG = {
 PLUGIN_CONFIG = {
   "vault": {
     "path": "secret/",
+    "secret_key_name": "binaryData", # key to store the certificate in
+    "storage_method": "binarylist", # How we store the data, e.g. "raw"
     "default_kv_version": 1, # https://hvac.readthedocs.io/en/stable/usage/secrets_engines/kv.html#setting-the-default-kv-version
     "client": {}, # Any option from https://hvac.readthedocs.io/en/stable/source/hvac_v1.html#hvac.v1.Client
     "auth_method": "approle", # From https://hvac.readthedocs.io/en/stable/source/hvac_api.html#hvac.api.AuthMethods
@@ -75,6 +77,21 @@ PLUGIN_CONFIG = {
   },
 }
 ```
+
+###### `storage_method`
+
+You can process the certificate and key data before we store it Vault in
+different ways:
+
+`storage_method` | Explaination
+-|-
+`raw` | Nothing done, the default.
+`base64` | We base64 encode the data
+`binarylist` | We create a binary list of the data[^1]
+
+[^1]: Please don't store your data this way. It's just to support the legacy
+    way [VaultTool](https://github.com/stockholmuniversity/vaulttool) uses to
+    store binary files.
 
 # TODO
 * [X] Add `/generate` endpoint

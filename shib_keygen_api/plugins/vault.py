@@ -1,4 +1,5 @@
 # mypy: disable-error-code="union-attr"
+import base64
 from pathlib import Path
 from typing import Any, Dict
 
@@ -41,11 +42,29 @@ class Vault(Plugin):
         current_app.logger.debug("cert_exists: %r", cert_exists)
 
         if not cert_exists:
+            public: Any = pem.public
+            private: Any = pem.private
+            storage_method = CONFIG.get("storage_method", "raw")
+            if storage_method == "base64":
+                public = base64.b64encode(public.encode())
+                private = base64.b64encode(private.encode())
+            elif storage_method == "binarylist":
+                public = [ord(c) for c in public]
+                private = [ord(c) for c in private]
+            elif storage_method == "raw":
+                pass
+            else:
+                current_app.logger.error(
+                    "Incorrect 'storage_method'  %r using 'raw' instead.",
+                    storage_method,
+                )
+
+            current_app.logger.debug("storage_method: %r", storage_method)
             CLIENT.kv.create_or_update_secret(
-                certificate, method="POST", secret={"binaryData": pem.public}
+                certificate, method="POST", secret={"binaryData": public}
             )
             CLIENT.kv.create_or_update_secret(
-                key, method="POST", secret={"binaryData": pem.private}
+                key, method="POST", secret={"binaryData": private}
             )
             current_app.logger.info(
                 "Successfully stored certs for %r in %r", csr.common_name, cert_path
