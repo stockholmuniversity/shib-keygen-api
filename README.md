@@ -96,6 +96,7 @@ different ways:
 # TODO
 * [X] Add `/generate` endpoint
 * [X] Decide plugin signature
+* [ ] Erase memory after use https://github.com/AtakamaLLC/pysecbytes
 * Implement plugins
   * [X] `stdout` plugin
   * [X] `dir` plugin
