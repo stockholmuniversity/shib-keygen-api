@@ -23,18 +23,24 @@ class Vault(Plugin):
                 __name__[__name__.rfind(".") + 1 :], {}
             )
         if not CLIENT:
-            CLIENT = hvac.Client(**CONFIG["client"])
-            CLIENT.kv.default_kv_version = 1
-            getattr(CLIENT.auth, CONFIG["auth_method"]).login(
-                **CONFIG["auth_method_params"]
-            )
+            try:
+                CLIENT = hvac.Client(**CONFIG["client"])
+                CLIENT.kv.default_kv_version = 1
+                getattr(CLIENT.auth, CONFIG["auth_method"]).login(
+                    **CONFIG["auth_method_params"]
+                )
+            except hvac.exceptions.VaultError as ex:
+                raise RuntimeError("Can't configure Vault") from ex
 
     @classmethod
     def export(cls, pem: PEM, csr: CSR) -> bool:
         cls.config()
         cert_path = CONFIG["path"]
         cert_path = Path(cert_path) / Path(csr.path)
-        certs = CLIENT.kv.list_secrets(cert_path)
+        try:
+            certs = CLIENT.kv.list_secrets(cert_path)
+        except hvac.exceptions.VaultError as ex:
+            raise RuntimeError("Can't list certificates in Vault") from ex
         current_app.logger.info("%r", certs)
         certificate = cert_path / (csr.common_name + "-cert.pem")
         key = cert_path / (csr.common_name + "-key.pem")
@@ -60,15 +66,18 @@ class Vault(Plugin):
                 )
 
             current_app.logger.debug("storage_method: %r", storage_method)
-            CLIENT.kv.create_or_update_secret(
-                certificate, method="POST", secret={"binaryData": public}
-            )
-            CLIENT.kv.create_or_update_secret(
-                key, method="POST", secret={"binaryData": private}
-            )
-            current_app.logger.info(
-                "Successfully stored certs for %r in %r", csr.common_name, cert_path
-            )
+            try:
+                CLIENT.kv.create_or_update_secret(
+                    certificate, method="POST", secret={"binaryData": public}
+                )
+                CLIENT.kv.create_or_update_secret(
+                    key, method="POST", secret={"binaryData": private}
+                )
+                current_app.logger.info(
+                    "Successfully stored certs for %r in %r", csr.common_name, cert_path
+                )
+            except hvac.exceptions.VaultError as ex:
+                raise RuntimeError("Can't export certificates to Vault") from ex
         else:
             current_app.logger.info(
                 "Successfully found certs for %r in %r", csr.common_name, cert_path
