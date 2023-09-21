@@ -3,7 +3,7 @@ import base64
 from pathlib import Path
 from typing import Any, Dict
 
-import hvac
+import hvac  # type: ignore
 from flask import current_app
 
 from shib_keygen_api.plugins import CSR, PEM, Plugin
