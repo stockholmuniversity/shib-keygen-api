@@ -1,4 +1,5 @@
 # mypy: disable-error-code="union-attr"
+from pathlib import Path
 from typing import Any, Dict
 
 import hvac
@@ -23,11 +24,38 @@ class Vault(Plugin):
         if not CLIENT:
             CLIENT = hvac.Client(**CONFIG["client"])
             CLIENT.kv.default_kv_version = 1
+            getattr(CLIENT.auth, CONFIG["auth_method"]).login(
+                **CONFIG["auth_method_params"]
+            )
 
     @classmethod
     def export(cls, pem: PEM, csr: CSR) -> bool:
         cls.config()
-        return False
+        cert_path = CONFIG["path"]
+        cert_path = Path(cert_path) / Path(csr.path)
+        certs = CLIENT.kv.list_secrets(cert_path)
+        current_app.logger.info("%r", certs)
+        certificate = cert_path / (csr.common_name + "-cert.pem")
+        key = cert_path / (csr.common_name + "-key.pem")
+        cert_exists = certificate.name in certs["data"]["keys"]
+        current_app.logger.debug("cert_exists: %r", cert_exists)
+
+        if not cert_exists:
+            CLIENT.kv.create_or_update_secret(
+                certificate, method="POST", secret={"binaryData": pem.public}
+            )
+            CLIENT.kv.create_or_update_secret(
+                key, method="POST", secret={"binaryData": pem.private}
+            )
+            current_app.logger.info(
+                "Successfully stored certs for %r in %r", csr.common_name, cert_path
+            )
+        else:
+            current_app.logger.info(
+                "Successfully found certs for %r in %r", csr.common_name, cert_path
+            )
+
+        return True
 
     @classmethod
     def status(cls) -> bool:

@@ -64,8 +64,14 @@ PLUGIN_CONFIG = {
 ```python
 PLUGIN_CONFIG = {
   "vault": {
+    "path": "secret/",
     "default_kv_version": 1, # https://hvac.readthedocs.io/en/stable/usage/secrets_engines/kv.html#setting-the-default-kv-version
     "client": {}, # Any option from https://hvac.readthedocs.io/en/stable/source/hvac_v1.html#hvac.v1.Client
+    "auth_method": "approle", # From https://hvac.readthedocs.io/en/stable/source/hvac_api.html#hvac.api.AuthMethods
+    "auth_method_params": { # https://hvac.readthedocs.io/en/stable/source/hvac_api_auth_methods.html
+      "role_id": "7ef99e5e-1d05-4b31-946a-eb86dbc98d93",
+      "secret_id": "d2566186-267e-4ed4-9a25-f488bebdb3a5",
+    },
   },
 }
 ```
