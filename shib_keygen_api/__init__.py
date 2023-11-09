@@ -1,4 +1,5 @@
 import importlib.metadata as importlib_metadata
+import logging.config
 import sys
 from importlib.metadata import entry_points
 from typing import Any, Dict, Optional, Tuple
@@ -16,6 +17,8 @@ app.config.from_prefixed_env()
 
 __metadata__ = importlib_metadata.metadata(__name__)
 __version__ = __metadata__["Version"]
+
+logging.config.dictConfig({**{"version": 1}, **app.config.get("LOGGING", {})})
 
 DEFAULT_PLUGIN = "stdout"
 PLUGIN_GROUP = "shib_keygen_api.plugins"
