@@ -29,10 +29,10 @@ node("agent") {
             }
 
             suWithPoetryCredentials(tag: tag) {
-                sh(script: "python3 -m poetry run python3 -m pylint *.py ${moduleName}")
+                sh(script: "python3 -m poetry run python3 -m pylint ${moduleName}")
                 sh(script: "python3 -m poetry run python3 -m black --check --diff .")
                 sh(script: "python3 -m poetry run python3 -m isort --check --diff .")
-                sh(script: "python3 -m poetry run python3 -m mypy *.py ${moduleName}")
+                sh(script: "python3 -m poetry run python3 -m mypy ${moduleName}")
                 sh(script: "python3 -m poetry run python3 -m pytest")
             }
         }
