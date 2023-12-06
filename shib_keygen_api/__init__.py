@@ -12,7 +12,10 @@ from shib_keygen_api.plugins import CSR
 
 app = Flask(__name__)
 
-app.config.from_envvar("FLASK_CONFIG", silent=True)
+try:
+    app.config.from_envvar("FLASK_CONFIG", silent=False)
+except (FileNotFoundError, RuntimeError) as ex:
+    logging.error("Couldn't read config file: %s", ex)
 app.config.from_prefixed_env()
 
 __metadata__ = importlib_metadata.metadata(__name__)
@@ -72,7 +75,7 @@ def generate() -> Any:
             export_status,
         )
         response = {"status": export_status}
-    except HTTPException as ex:
+    except HTTPException as ex:  # pylint: disable=redefined-outer-name
         app.logger.exception("wat")
         code = ex.code
         response = {"error": {"code": code, "message": str(ex)}}
@@ -94,7 +97,9 @@ def status() -> Tuple[Dict[str, Any], int]:
     code = 200
     try:
         plugin_status = output_plugin.status() if output_plugin else None
-    except Exception as ex:  # pylint: disable=broad-exception-caught
+    except (  # pylint: disable=broad-exception-caught,redefined-outer-name
+        Exception
+    ) as ex:
         code = 500
         plugin_status = False
         app.logger.info(
