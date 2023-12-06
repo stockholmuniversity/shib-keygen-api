@@ -45,9 +45,9 @@ PLUGIN_CONFIG = {
   },
 }
 EOF
-$ env FLASK_CONFIG=shib_keygen_api.cfg gunicorn -b localhost:5000 shib_keygen_api:app --reload --reload-extra-file shib_keygen_api.cfg
+$ env FLASK_CONFIG=$PWD/shib_keygen_api.cfg gunicorn -b localhost:5000 shib_keygen_api:app --reload --reload-extra-file shib_keygen_api.cfg
 $ # or
-$ env FLASK_CONFIG=shib_keygen_api.cfg FLASK_APP=shib_keygen_api:app flask run --reload --extra-files shib_keygen_api.cfg
+$ env FLASK_CONFIG=$PWD/shib_keygen_api.cfg FLASK_APP=shib_keygen_api:app flask run --reload --extra-files shib_keygen_api.cfg
 ```
 
 #### Plugin configuration
