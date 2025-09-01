@@ -106,14 +106,11 @@ def status() -> Tuple[Dict[str, Any], int]:
     code = 200
     try:
         plugin_status = output_plugin.status() if output_plugin else None
-    except (  # pylint: disable=broad-exception-caught,redefined-outer-name
-        Exception
-    ) as ex:
+    except Exception:  # pylint: disable=broad-exception-caught,redefined-outer-name
         code = 500
         plugin_status = False
-        app.logger.info(
-            "Caught exception %r while trying to get status from plugin %r",
-            ex,
+        app.logger.exception(
+            "Caught exception while trying to get status from plugin %r",
             output_plugin,
         )
     plugin_name = output_plugin_class.name if output_plugin_class else None
