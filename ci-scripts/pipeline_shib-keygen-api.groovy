@@ -36,6 +36,26 @@ node("agent") {
                 sh(script: "python3 -m poetry run python3 -m mypy ${moduleName}")
                 sh(script: "python3 -m poetry run python3 -m pytest")
             }
+
+            stage("Build and push docker image") {
+                String dockerRegistry = suGetConfVariable 'docker_registry'
+                docker.withRegistry('https://' + dockerRegistry, 'su-docker-private') {
+                    if (tag) {
+                        build_args = "--build-arg TAG=${tag} --target prod"
+                    }
+                    else {
+                        build_args = "--target dev"
+                    }
+                    withEnv(['DOCKER_BUILDKIT=1']) {
+                        app = docker.build(projectName, "--build-arg PROJECT=${moduleName} ${build_args} --pull .")
+                    }
+                    if (tag) {
+                        app.push(tag)
+                    } else {
+                        app.push("latest")
+                    }
+                }
+            }
         }
     }
 }
