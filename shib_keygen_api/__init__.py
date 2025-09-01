@@ -5,6 +5,7 @@ from importlib.metadata import entry_points
 from typing import Any, Dict, Optional, Tuple
 
 from flask import Flask, request
+from flask.logging import default_handler
 from werkzeug.exceptions import HTTPException
 
 from shib_keygen_api.generator import openssl
@@ -22,6 +23,14 @@ __metadata__ = importlib_metadata.metadata(__name__)
 __version__ = __metadata__["Version"]
 
 logging.config.dictConfig({**{"version": 1}, **app.config.get("LOGGING", {})})
+
+# Set Flasks logging handler to all loggers and enable them all
+for logger in [
+    logging.getLogger(name)
+    for name in logging.root.manager.loggerDict  # pylint: disable=no-member
+]:
+    logger.handlers = [default_handler]
+    logger.disabled = False
 
 DEFAULT_PLUGIN = "stdout"
 PLUGIN_GROUP = "shib_keygen_api.plugins"
