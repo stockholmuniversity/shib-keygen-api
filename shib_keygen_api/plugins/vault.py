@@ -22,7 +22,9 @@ class Vault(Plugin):
             CONFIG = current_app.config.get("PLUGIN_CONFIG", {}).get(
                 __name__[__name__.rfind(".") + 1 :], {}
             )
-        if not CLIENT:
+
+        def login() -> None:
+            global CLIENT  # pylint: disable=global-statement
             try:
                 CLIENT = hvac.Client(**CONFIG["client"])
                 CLIENT.kv.default_kv_version = 1
@@ -31,6 +33,15 @@ class Vault(Plugin):
                 )
             except hvac.exceptions.VaultError as ex:
                 raise RuntimeError("Can't configure Vault") from ex
+
+        if not CLIENT:
+            login()
+        # Renew token if it expires in less then a minute
+        try:
+            if CLIENT.lookup_token().get("data", {}).get("ttl", 0) < 60:
+                login()
+        except hvac.exceptions.Forbidden:
+            login()
 
     @classmethod
     def export(cls, pem: PEM, csr: CSR) -> bool:
