@@ -47,7 +47,7 @@ node("agent") {
                         build_args = "--target dev"
                     }
                     withEnv(['DOCKER_BUILDKIT=1']) {
-                        app = docker.build(projectName, "--build-arg PROJECT=${moduleName} ${build_args} --pull .")
+                        app = docker.build(projectName, "--build-arg PROJECT=${projectName} ${build_args} --pull .")
                     }
                     if (tag) {
                         app.push(tag)
