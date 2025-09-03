@@ -11,7 +11,7 @@ RUN \
 # pip doesn't know about the index configured in pyproject.toml
 ENV \
   HOME=/usr/src \
-  PIP_INDEX_URL=https://maven.it.su.se/repository/su-pypi-group/simple
+  PIP_INDEX_URL=https://pypi.it.su.se/repository/su-pypi-group/simple
 
 FROM deps AS build
 ARG PROJECT PY_VER
@@ -39,7 +39,7 @@ RUN \
 # pip doesn't know about the index configured in pyproject.toml
 ENV \
   HOME=/usr/src \
-  PIP_INDEX_URL=https://maven.it.su.se/repository/su-pypi-group/simple
+  PIP_INDEX_URL=https://pypi.it.su.se/repository/su-pypi-group/simple
 
 USER 1000
 
