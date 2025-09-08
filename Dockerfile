@@ -53,7 +53,7 @@ ENV HOME=/home/nonroot
 COPY --chown=65532:65532 --from=install /usr/src/.venv $HOME
 ENV PATH=$HOME/bin:$PATH PYTHONPATH=$HOME/lib/python${PY_VER}/site-packages/
 ENTRYPOINT ["gunicorn", "shib_keygen_api:app"]
-CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/ssl/key.pem", "--certfile", "/mnt/ssl/cert.pem"]
+CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/secret/key.pem", "--certfile", "/mnt/secret/cert.pem"]
 
 FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec2fd3fc775d9b6e0cff8ba31e21498948393af1a9a3001 AS dev
 ARG PY_VER
@@ -62,4 +62,4 @@ ENV HOME=/home/nonroot
 COPY --chown=65532:65532 --from=build /usr/src/.venv $HOME
 ENV PATH=$HOME/bin:$PATH PYTHONPATH=$HOME/lib/python${PY_VER}/site-packages/
 ENTRYPOINT ["gunicorn", "shib_keygen_api:app"]
-CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/ssl/key.pem", "--certfile", "/mnt/ssl/cert.pem"]
+CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/secret/key.pem", "--certfile", "/mnt/secret/cert.pem"]
