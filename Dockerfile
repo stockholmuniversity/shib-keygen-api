@@ -1,7 +1,7 @@
 # Don't name this PYTHON_VERSION since the python image already uses that for the full version
-ARG PY_VER=3.11
+ARG PY_VER=3.11 GUNICORN_VERSION=23.0.0
 FROM python:${PY_VER}-slim-bookworm AS deps
-ARG PROJECT PY_VER
+ARG PROJECT PY_VER GUNICORN_VERSION
 WORKDIR /usr/src
 RUN \
   mkdir -p .venv \
@@ -13,6 +13,10 @@ ENV \
   HOME=/usr/src \
   PIP_INDEX_URL=https://pypi.it.su.se/repository/su-pypi-group/simple
 
+USER 1000
+
+RUN pip install --prefix .venv gunicorn==$GUNICORN_VERSION
+
 FROM deps AS build
 ARG PROJECT PY_VER
 
@@ -20,7 +24,6 @@ USER 1000
 
 COPY poetry.lock pyproject.toml ./
 RUN mkdir -p $PROJECT && touch $PROJECT/__init__.py
-RUN pip install --prefix .venv gunicorn==23.0.0
 RUN pip install --prefix .venv .[vault]
 COPY poetry.lock pyproject.toml ./
 COPY $PROJECT/ ./$PROJECT/
