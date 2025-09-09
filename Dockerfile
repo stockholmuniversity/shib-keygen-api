@@ -48,6 +48,7 @@ RUN pip install --prefix .venv $PROJECT==$TAG
 RUN sed -i -e '1 s@#!/usr/local/bin/python@#!/usr/bin/python@' .venv/bin/*
 
 FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec2fd3fc775d9b6e0cff8ba31e21498948393af1a9a3001 AS prod
+ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
 COPY --chown=65532:65532 --from=install /usr/src/.venv $HOME
