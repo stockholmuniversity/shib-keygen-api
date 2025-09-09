@@ -33,20 +33,10 @@ RUN sed -i -e '1 s@#!/usr/local/bin/python@#!/usr/bin/python@' .venv/bin/*
 
 FROM deps AS install
 ARG PROJECT TAG
-WORKDIR /usr/src
-RUN \
-  mkdir -p .venv \
-  && \
-  chmod -R a+rw .
-
-# pip doesn't know about the index configured in pyproject.toml
-ENV \
-  HOME=/usr/src \
-  PIP_INDEX_URL=https://pypi.it.su.se/repository/su-pypi-group/simple
 
 USER 1000
 
-RUN pip install --prefix .venv $PROJECT==$TAG
+RUN pip install --prefix .venv $PROJECT[vault]==$TAG
 # Fix shebang...
 RUN sed -i -e '1 s@#!/usr/local/bin/python@#!/usr/bin/python@' .venv/bin/*
 
