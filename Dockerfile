@@ -45,6 +45,9 @@ ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
 COPY --chown=65532:65532 --from=install /usr/src/.venv $HOME
+USER root
+RUN ["/busybox/sh", "-c", "chmod a+rwx $HOME"]
+USER nonroot
 ENV PATH=$HOME/bin:$PATH PYTHONPATH=$HOME/lib/python${PY_VER}/site-packages/
 ENTRYPOINT ["gunicorn", "shib_keygen_api:app"]
 CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/secret/key.pem", "--certfile", "/mnt/secret/cert.pem"]
