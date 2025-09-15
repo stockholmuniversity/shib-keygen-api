@@ -13,6 +13,23 @@ ENV \
   HOME=/usr/src \
   PIP_INDEX_URL=https://pypi.it.su.se/repository/su-pypi-group/simple
 
+RUN apt-get update \
+    && \
+    apt-get download openssl $(apt-cache depends -i --recurse openssl | awk '/Depends:/{print $2}' | sort -u) \
+    && \
+    # https://github.com/GoogleContainerTools/distroless/issues/863 \
+    mkdir -p /dpkg/var/lib/dpkg/status.d/ && \
+    for deb in *.deb; do \
+    package_name=$(dpkg-deb -I ${deb} | awk '/^ Package: .*$/ {print $2}'); \
+    dpkg --ctrl-tarfile $deb | tar -Oxf - ./control > /dpkg/var/lib/dpkg/status.d/${package_name}; \
+    dpkg --extract $deb /dpkg || exit 10; \
+    done \
+    && \
+    rm -rf /var/lib/apt/lists/* \
+    && \
+    find /dpkg/ -type d -empty -delete && rm -r /dpkg/usr/share/doc/ \
+    ;
+
 USER 1000
 
 RUN pip install --prefix .venv gunicorn==$GUNICORN_VERSION
@@ -44,6 +61,7 @@ FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec
 ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
+COPY --from=deps /dpkg /
 COPY --chown=65532:65532 --from=install /usr/src/.venv $HOME
 USER root
 RUN ["/busybox/sh", "-c", "chmod a+rwx $HOME"]
@@ -56,6 +74,7 @@ FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec
 ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
+COPY --from=deps /dpkg /
 COPY --chown=65532:65532 --from=build /usr/src/.venv $HOME
 USER root
 RUN ["/busybox/sh", "-c", "chmod a+rwx $HOME"]
