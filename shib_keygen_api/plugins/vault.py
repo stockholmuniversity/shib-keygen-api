@@ -50,12 +50,14 @@ class Vault(Plugin):
         cert_path = Path(cert_path) / Path(csr.path)
         try:
             certs = CLIENT.kv.list_secrets(cert_path)
+        except hvac.exceptions.InvalidPath:
+            certs = {}
         except hvac.exceptions.VaultError as ex:
             raise RuntimeError("Can't list certificates in Vault") from ex
         current_app.logger.info("%r", certs)
         certificate = cert_path / (csr.common_name + "-cert.pem")
         key = cert_path / (csr.common_name + "-key.pem")
-        cert_exists = certificate.name in certs["data"]["keys"]
+        cert_exists = certificate.name in certs["data"]["keys"] if certs else False
         current_app.logger.debug("cert_exists: %r", cert_exists)
 
         if not cert_exists:
