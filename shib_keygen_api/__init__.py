@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional, Tuple
 from flask import Flask, request
 from flask.logging import default_handler
 from werkzeug.exceptions import HTTPException
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from shib_keygen_api.generator import openssl
 from shib_keygen_api.plugins import CSR
@@ -18,6 +19,10 @@ try:
 except (FileNotFoundError, RuntimeError) as ex:
     logging.error("Couldn't read config file: %s", ex)
 app.config.from_prefixed_env()
+
+app.wsgi_app = ProxyFix(  # type: ignore[method-assign]
+    app.wsgi_app, **app.config.get("PROXY_FIX", {})
+)
 
 __metadata__ = importlib_metadata.metadata(__name__)
 __version__ = __metadata__["Version"]

@@ -34,6 +34,7 @@ You can configure the application with either
 `OUTPUT_PLUGIN` | Output plugin to store the certs | `dir`
 `PLUGIN_CONFIG` | Dict where the configuration for output plugin is stored. Key is the plugin name.API-key or password to use when connecting | `{"dir": {"path":"/srv/shib-certs"}}`
 `LOGGING` | Dict where the [configuration logging.dictConfig](https://docs.python.org/3/library/logging.config.html#logging-config-dictschema) is stored. | `{"root": {"level":"INFO"}}`
+`PROXY_FIX` | Dict where the [proxy\_fix](https://flask.palletsprojects.com/en/stable/deploying/proxy_fix/) and [Workzeug middleware](https://werkzeug.palletsprojects.com/en/stable/middleware/proxy_fix/) is stored. | `{"x_for": 3}`
 
 Example:
 ```shell
