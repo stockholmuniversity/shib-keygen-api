@@ -27,7 +27,9 @@ class Vault(Plugin):
             global CLIENT  # pylint: disable=global-statement
             try:
                 CLIENT = hvac.Client(**CONFIG["client"])
-                CLIENT.kv.default_kv_version = 1
+                CLIENT.secrets.kv.default_kv_version = CONFIG.get(
+                    "default_kv_version", 1
+                )
                 getattr(CLIENT.auth, CONFIG["auth_method"]).login(
                     **CONFIG["auth_method_params"]
                 )
