@@ -54,7 +54,7 @@ class Vault(Plugin):
             certs = {}
         except hvac.exceptions.VaultError as ex:
             raise RuntimeError("Can't list certificates in Vault") from ex
-        current_app.logger.info("%r", certs)
+        current_app.logger.debug("%r", certs)
         certificate = cert_path / (csr.common_name + "-cert.pem")
         key = cert_path / (csr.common_name + "-key.pem")
         cert_exists = certificate.name in certs["data"]["keys"] if certs else False
