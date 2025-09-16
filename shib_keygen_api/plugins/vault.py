@@ -49,7 +49,7 @@ class Vault(Plugin):
         cert_path = CONFIG["path"]
         cert_path = Path(cert_path) / Path(csr.path)
         try:
-            certs = CLIENT.kv.list_secrets(cert_path)
+            certs = CLIENT.secrets.kv.list_secrets(cert_path)
         except hvac.exceptions.InvalidPath:
             certs = {}
         except hvac.exceptions.VaultError as ex:
@@ -80,10 +80,10 @@ class Vault(Plugin):
 
             current_app.logger.debug("storage_method: %r", storage_method)
             try:
-                CLIENT.kv.create_or_update_secret(
+                CLIENT.secrets.kv.create_or_update_secret(
                     certificate, method="POST", secret={"binaryData": public}
                 )
-                CLIENT.kv.create_or_update_secret(
+                CLIENT.secrets.kv.create_or_update_secret(
                     key, method="POST", secret={"binaryData": private}
                 )
                 current_app.logger.info(
