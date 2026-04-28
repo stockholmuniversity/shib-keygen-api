@@ -5,7 +5,7 @@ description = "An API which generates Shibboleth SP/SAML2 metadata certificate, 
 authors = ["Simon Lundström <simlu+github@su.se>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 flask = "^3.1"
 hvac = { version = "^2.2", optional = true }
 
