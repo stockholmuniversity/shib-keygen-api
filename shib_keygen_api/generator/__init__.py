@@ -14,8 +14,7 @@ def openssl(csr: CSR) -> PEM:
     timeout = 5
     with tempfile.NamedTemporaryFile(buffering=0) as ssl_config:
         # From https://git.shibboleth.net/view/?p=cpp-sp.git;a=blob;f=configs/keygen.sh
-        ssl_config.write(
-            f"""
+        ssl_config.write(f"""
 # OpenSSL configuration file for creating keypair
 [req]
 prompt=no
@@ -31,8 +30,7 @@ CN={csr.common_name}
 [ext]
 subjectAltName=DNS:{csr.common_name}
 subjectKeyIdentifier=hash
-        """.encode()
-        )
+        """.encode())
         command = list(
             shlex.split(
                 f"openssl req -nodes -config {ssl_config.name} -new -x509 -days {DAYS}"
@@ -47,7 +45,7 @@ subjectKeyIdentifier=hash
             text=True,
         ) as process:
             try:
-                (stdout, stderr) = process.communicate(timeout=timeout)
+                stdout, stderr = process.communicate(timeout=timeout)
 
                 # Strip out irrelevant dhparam(?) output
                 stderr = stderr.lstrip("*.+-\n")
