@@ -1,6 +1,6 @@
 # Don't name this PYTHON_VERSION since the python image already uses that for the full version
-ARG PY_VER=3.11 GUNICORN_VERSION=23.0.0
-FROM python:${PY_VER}-slim-bookworm AS deps
+ARG PY_VER=3.13 GUNICORN_VERSION=23.0.0
+FROM python:${PY_VER}-slim-trixie AS deps
 ARG PROJECT PY_VER GUNICORN_VERSION
 WORKDIR /usr/src
 RUN \
@@ -57,7 +57,7 @@ RUN pip install --prefix .venv $PROJECT[vault]==$TAG
 # Fix shebang...
 RUN sed -i -e '1 s@#!/usr/local/bin/python@#!/usr/bin/python@' .venv/bin/*
 
-FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec2fd3fc775d9b6e0cff8ba31e21498948393af1a9a3001 AS prod
+FROM gcr.io/distroless/python3-debian13:debug-nonroot@sha256:57a28d5d8c262bcad1ba04116fa7273edd2aea70de55d59792d062c6f861d217 AS prod
 ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
@@ -70,7 +70,7 @@ ENV PATH=$HOME/bin:$PATH PYTHONPATH=$HOME/lib/python${PY_VER}/site-packages/
 ENTRYPOINT ["gunicorn", "shib_keygen_api:app"]
 CMD ["--bind", "0.0.0.0:8443", "--access-logfile", "-", "--keyfile", "/mnt/secret/key.pem", "--certfile", "/mnt/secret/cert.pem"]
 
-FROM gcr.io/distroless/python3-debian12:debug-nonroot@sha256:2ddeffa65fe354c46ec2fd3fc775d9b6e0cff8ba31e21498948393af1a9a3001 AS dev
+FROM gcr.io/distroless/python3-debian13:debug-nonroot@sha256:57a28d5d8c262bcad1ba04116fa7273edd2aea70de55d59792d062c6f861d217 AS dev
 ARG PY_VER
 SHELL ["/busybox/sh", "-c"]
 ENV HOME=/home/nonroot
