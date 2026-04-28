@@ -41,13 +41,7 @@ DEFAULT_PLUGIN = "stdout"
 PLUGIN_GROUP = "shib_keygen_api.plugins"
 PLUGIN = app.config.get("OUTPUT_PLUGIN", DEFAULT_PLUGIN)
 output_plugin_class = next(
-    iter(
-        [
-            ep
-            for ep in entry_points().get(PLUGIN_GROUP, [])
-            if ep.name == PLUGIN and ep.group == PLUGIN_GROUP
-        ],
-    ),
+    iter(entry_points().select(name=PLUGIN, group=PLUGIN_GROUP)),
     None,
 )
 if not output_plugin_class:
