@@ -10,7 +10,7 @@ flask = "^3.1"
 hvac = { version = "^2.2", optional = true }
 
 [tool.poetry.dev-dependencies]
-pytest = "^8"
+pytest = "^9"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^6"
