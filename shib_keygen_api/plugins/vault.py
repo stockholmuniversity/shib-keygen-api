@@ -16,7 +16,7 @@ CLIENT = None
 class Vault(Plugin):
     @staticmethod
     def config() -> None:
-        global CONFIG, CLIENT  # pylint: disable=global-statement
+        global CONFIG, CLIENT  # pylint: disable=global-variable-not-assigned
 
         if not CONFIG:
             CONFIG = current_app.config.get("PLUGIN_CONFIG", {}).get(
