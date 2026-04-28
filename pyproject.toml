@@ -13,9 +13,9 @@ hvac = { version = "^2.2", optional = true }
 pytest = "^9"
 
 [tool.poetry.group.dev.dependencies]
-isort = "^6"
-pylint = "^3"
-black = "^25"
+isort = "^8"
+pylint = "^4"
+black = "^26"
 mypy = "^1"
 
 [tool.poetry.extras]
